@@ -1,4 +1,4 @@
-// using MySql.Data.MySqlClient;
+using MySql.Data.MySqlClient;
 using System.Data;
 
 namespace BlabberApp.DataStore
@@ -17,7 +17,7 @@ namespace BlabberApp.DataStore
 
         public ConnectionState State => throw new System.NotImplementedException();
 
-        private MySql.Data.MySqlClient.MySqlConnection connection;
+        private MySqlConnection connection;
 
         public IDbTransaction BeginTransaction()
         {
@@ -40,7 +40,7 @@ namespace BlabberApp.DataStore
             {
                 connection.Close();
             }
-            catch (MySql.Data.MySqlClient.MySqlException ex)
+            catch (MySqlException ex)
             {
                 throw ex;
             }
@@ -48,7 +48,7 @@ namespace BlabberApp.DataStore
 
         public IDbCommand CreateCommand()
         {
-            throw new System.NotImplementedException();
+            return new MySqlDataStoreCommand(connection);
         }
 
         public void Dispose()
@@ -60,10 +60,10 @@ namespace BlabberApp.DataStore
         {
             try
             {
-                connection = new MySql.Data.MySqlClient.MySqlConnection(ConnectionString);
+                connection = new MySqlConnection(ConnectionString);
                 connection.Open();
             }
-            catch (MySql.Data.MySqlClient.MySqlException ex)
+            catch (MySqlException ex)
             {
                 throw ex;
             }
