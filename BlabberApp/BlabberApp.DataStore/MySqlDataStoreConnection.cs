@@ -1,4 +1,5 @@
 using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Cms;
 using System.Data;
 
 namespace BlabberApp.DataStore
@@ -48,7 +49,10 @@ namespace BlabberApp.DataStore
 
         public IDbCommand CreateCommand()
         {
-            return new MySqlDataStoreCommand(connection);
+            Open();
+            var Cmd = new MySqlCommand();
+            Cmd.Connection = connection;
+            return Cmd;
         }
 
         public void Dispose()
