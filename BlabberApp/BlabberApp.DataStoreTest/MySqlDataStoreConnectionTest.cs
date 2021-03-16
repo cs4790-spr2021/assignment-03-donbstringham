@@ -1,6 +1,7 @@
+using BlabberApp.DataStore;
+using BlabberApp.Domain;
 using System;
 using System.Data;
-using BlabberApp.DataStore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BlabberApp.DataStoreTest

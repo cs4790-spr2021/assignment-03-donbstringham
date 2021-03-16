@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using BlabberApp.DataStore;
 using BlabberApp.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -63,15 +62,52 @@ namespace BlabberApp.DataStoreTest
         public void TestReadAllSuccess()
         {
             // arrange
-            var expected = new List<UserEntity>().ToArray();
-            var fixture = new UserMySqlDataStore(new MySqlDataStoreConnection(
+            MySqlDataStoreConnection conn = new MySqlDataStoreConnection(
                 "Server=143.110.159.170;Port=3306;Database=donstringham;Uid=donstringham;Pwd=letmein;"
-            ));
+            );
+            UserMySqlDataStore fixture = new UserMySqlDataStore(conn);
+            var Expected = typeof(IDomain[]);
             // act
+            IDomain[] actual = fixture.ReadAll();
+            // assert
+            Assert.IsInstanceOfType(actual, Expected);
+            Assert.AreEqual(0, actual.Length);
+        }
+        [TestMethod]
+        public void TestReadAllOneRecord()
+        {
+            // arrange
+            MySqlDataStoreConnection conn = new MySqlDataStoreConnection(
+                "Server=143.110.159.170;Port=3306;Database=donstringham;Uid=donstringham;Pwd=letmein;"
+            );
+            UserMySqlDataStore fixture = new UserMySqlDataStore(conn);
+            UserEntity usr = new UserEntity();
+            usr.SetId("example@example.com");
+            usr.Name = "Example";
+            var Expected = typeof(IDomain[]);
+            // act
+            fixture.Create(usr);
+            IDomain[] actual = fixture.ReadAll();
+            // assert
+            Assert.IsInstanceOfType(actual, Expected);
+            Assert.AreEqual(1, actual.Length);
+
+            fixture.DeleteAll();
+        }
+        [TestMethod]
+        public void TestDeleteAll()
+        {
+            // arrange
+            MySqlDataStoreConnection conn = new MySqlDataStoreConnection(
+                "Server=143.110.159.170;Port=3306;Database=donstringham;Uid=donstringham;Pwd=letmein;"
+            );
+            UserMySqlDataStore fixture = new UserMySqlDataStore(conn);
+            // act
+            fixture.DeleteAll();
             var actual = fixture.ReadAll();
             // assert
-            Assert.AreEqual(expected, actual);
-        }   
+            Assert.AreEqual(0, actual.Length);
+        }
         [TestMethod]
         public void TestUpdateSuccess()
         {

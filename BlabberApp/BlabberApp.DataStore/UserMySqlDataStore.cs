@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Data;
 using BlabberApp.Domain;
+using MySql.Data.MySqlClient;
 
 namespace BlabberApp.DataStore
 {
@@ -14,8 +14,13 @@ namespace BlabberApp.DataStore
         }
         public void Create(IDomain o)
         {
-            // INSERT INTO users (name, sys_id) VALUES (o.Name, o.GetId());
-            throw new System.NotImplementedException();
+            UserEntity u = (UserEntity)o;
+            var cmd = (MySqlCommand)Connection.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "INSERT INTO users (name, sys_id) VALUES (@name, @sysid)";
+            cmd.Parameters.AddWithValue("@name", u.Name);
+            cmd.Parameters.AddWithValue("@sysid", u.GetId());
+            cmd.ExecuteScalar();
         }
 
         public void Delete(string ID)
@@ -24,6 +29,13 @@ namespace BlabberApp.DataStore
             throw new System.NotImplementedException();
         }
 
+        public void DeleteAll()
+        {
+            var cmd = (MySqlCommand)Connection.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "DELETE FROM users";
+            cmd.ExecuteScalar();
+        }
         public IDomain Read(string ID)
         {
             var buf = new UserEntity();
@@ -52,8 +64,8 @@ namespace BlabberApp.DataStore
             while (reader.Read())
             {
                 var User = new UserEntity();
-                User.SetId(reader.GetString(3));
-                User.Name = reader.GetString(2);
+                User.SetId(reader.GetString(reader.GetOrdinal("sys_id")));
+                User.Name = reader.GetString(reader.GetOrdinal("name"));
                 buf.Add(User);
             }
             reader.Close();
